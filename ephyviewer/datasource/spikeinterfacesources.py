@@ -6,12 +6,13 @@ from .sourcebase import BaseDataSource
 import sys
 import logging
 
+from packagind.version import Version as V
+
 import numpy as np
 
 try:
-    from distutils.version import LooseVersion as V
     import spikeinterface
-    if V(spikeinterface.__version__)>='0.90.1':
+    if V(spikeinterface.__version__)>=V('0.90.1'):
         HAVE_SI = True
     else:
         HAVE_SI = False
