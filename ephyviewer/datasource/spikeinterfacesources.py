@@ -66,7 +66,7 @@ class SpikeInterfaceRecordingSource(BaseAnalogSignalSource):
 
     def time_to_index(self, t):
         if self.hign_precision:
-            return (np.abs(self.times - t)).argmin()
+            return np.searchsorted(self.times, t)
         else:
             return int(t * self.sample_rate)
 
