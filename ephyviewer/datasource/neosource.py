@@ -10,12 +10,13 @@ from .sourcebase import BaseDataSource
 import sys
 import logging
 
+from packaging.version import Version as V
+
 import numpy as np
 
 try:
-    from distutils.version import LooseVersion as V
     import neo
-    if V(neo.__version__)>='0.6.0':
+    if V(neo.__version__)>=V('0.6.0'):
         HAVE_NEO = True
         from neo.rawio.baserawio import BaseRawIO
     else:
@@ -142,7 +143,7 @@ class AnalogSignalFromNeoRawIOSource(BaseAnalogSignalSource):
             channel_indexes = slice(None)
         self.channel_indexes = channel_indexes
 
-        if V(neo.__version__)>='0.10.0':
+        if V(neo.__version__)>=V('0.10.0'):
             # Neo >= 0.10
             # - versions 0.10+ index channels within a stream
             if stream_index is not None:
@@ -161,7 +162,7 @@ class AnalogSignalFromNeoRawIOSource(BaseAnalogSignalSource):
             assert stream_index is None, f'Neo version {neo.__version__} is installed, but only Neo>=0.10 uses stream_index'
             self.channels = self.neorawio.header['signal_channels'][self.channel_indexes]
 
-        if V(neo.__version__)>='0.10.0':
+        if V(neo.__version__)>=V('0.10.0'):
             # Neo >= 0.10
             # - versions 0.10+ use stream_index as an argument often,
             #   but also require channel_indexes for get_chunk
@@ -226,7 +227,7 @@ class SpikeFromNeoRawIOSource(BaseSpikeSource):
             channel_indexes = slice(None)
         self.channel_indexes = channel_indexes
 
-        if V(neo.__version__)>='0.10.0':
+        if V(neo.__version__)>=V('0.10.0'):
             # Neo >= 0.10
             # - versions 0.10+ have spike_channels
             self.channels = self.neorawio.header['spike_channels'][channel_indexes]
