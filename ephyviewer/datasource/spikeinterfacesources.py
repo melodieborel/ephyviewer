@@ -74,7 +74,7 @@ class SpikeInterfaceSortingSource(BaseSpikeSource):
         self.sorting = sorting
         self.segment_index = segment_index
 
-        #TODO
+        #TODO: no way to know the duration without a registered recording
         self._t_stop = 10.
 
     @property
@@ -86,10 +86,12 @@ class SpikeInterfaceSortingSource(BaseSpikeSource):
 
     @property
     def t_start(self):
-        return 0.
+        return self.sorting.sample_index_to_time(0, segment_index=self.segment_index)
 
     @property
     def t_stop(self):
+        if self.sorting.has_recording():
+            return self.sorting.get_total_duration()
         return self._t_stop
 
     def get_chunk(self, chan=0,  i_start=None, i_stop=None):
@@ -97,7 +99,7 @@ class SpikeInterfaceSortingSource(BaseSpikeSource):
         spike_frames = self.sorting.get_unit_spike_train(unit_id,
                     segment_index=self.segment_index, start_frame=i_start, end_frame=i_stop)
         spike_frames = spike_frames[i_start:i_stop]
-        spike_times = spike_frames / self.sorting.get_sampling_frequency()
+        spike_times = self.sorting.sample_index_to_time(spike_frames, segment_index=self.segment_index)
         return spike_times
 
     def get_chunk_by_time(self, chan=0,  t_start=None, t_stop=None):
